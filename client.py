@@ -1,6 +1,6 @@
 import random, requests, time
 
-url = 'http://localhost:7777/number'
+url = 'http://moodringultra.ca:7777/number'
 
 def make_request():
     number = random.randint(1, 101)

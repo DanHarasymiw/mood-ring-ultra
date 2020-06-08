@@ -14,4 +14,4 @@ def make_request():
 
 while True:
     make_request()
-    time.sleep(5)
+    time.sleep(300)

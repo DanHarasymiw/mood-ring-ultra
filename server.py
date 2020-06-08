@@ -49,4 +49,4 @@ def number():
         numbers.pop(0)
     numbers.append(num)
 
-run(host='localhost', port=7777, debug=True)
+run(host='0.0.0.0', port=7777, debug=True)

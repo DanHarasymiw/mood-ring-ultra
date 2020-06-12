@@ -1,3 +1,5 @@
-.idea/
-*.iml
-__pycache__/
+/.idea/
+/server/target/
+/server/.lein-repl-history
+/server/.nrepl-port
+/server/.hgignore

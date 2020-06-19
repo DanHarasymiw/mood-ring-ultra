@@ -3,3 +3,7 @@
 /server/.lein-repl-history
 /server/.nrepl-port
 /server/.hgignore
+wasm/target/
+wasm/pkg/*
+!wasm/pkg/wasm.js
+!wasm/pkg/wasm_bg.wasm

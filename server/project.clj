@@ -10,7 +10,9 @@
                  [org.clojure/core.cache "1.0.207"]
                  [org.clojure/data.json "0.2.6"]
                  [overtone/at-at "1.2.0"]
-                 [ring/ring-defaults "0.3.2"]]
+                 [ring/ring-defaults "0.3.2"]
+                 [ring/ring-json "0.5.0"]
+                 [ring-cors "0.1.13"]]
   :repl-options {:init-ns server.core}
   :main server.core)
 

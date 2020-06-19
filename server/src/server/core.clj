@@ -1,21 +1,16 @@
 (ns server.core
     (:require [org.httpkit.server :as server]
-      [compojure.core :refer :all]
+      [compojure.core :refer [defroutes GET]]
       [compojure.route :as route]
-      [ring.middleware.defaults :refer :all]
+      [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
       [clojure.pprint :as pp]
       [clojure.string :as str]
       [clojure.data.json :as json]
       [clj-time.core :as t]
-      [overtone.at-at :as at-at])
+      [overtone.at-at :as at-at]
+      [ring.middleware.json :refer [wrap-json-response]]
+      [ring.middleware.cors :refer [wrap-cors]])
     (:gen-class))
-
-(def colours {:red "#AF4545"
-              :orange "#E37737"
-              :yellow "#c0BA3E"
-              :green "#49C849"
-              :cyan "#4AC1BD"
-              :blue "#4470D5"})
 
 (def sefkhet-abwy (atom {}))
 
@@ -29,14 +24,21 @@
               (-> ips (clojure.string/split #",") first)
               (:remote-addr req)))
 
-(defn paint [score]
+(def visible-spectrum {:700–635nm "#AF4545"
+              :635–590nm "#E37737"
+              :590–560nm  "#C0BA3E"
+              :560–520nm "#49C849"
+              :520–490nm "#4AC1BD"
+              :490–450nm "#4470D5"})
+
+(defn iris [score]
       (cond
-        (> score 95) (:blue colours)
-        (> score 90) (:cyan colours)
-        (> score 40) (:green colours)
-        (> score 10) (:yellow colours)
-        (> score 5) (:orange colours)
-        :default (:red colours)))
+        (> score 95) (:490–450nm visible-spectrum)
+        (> score 90) (:520–490nm visible-spectrum)
+        (> score 40) (:560–520nm visible-spectrum)
+        (> score 10) (:590–560nm visible-spectrum)
+        (> score 5) (:635–590nm visible-spectrum)
+        :default (:700–635nm visible-spectrum)))
 
 (defn manifest [number]
       (if (>= (count @hermes-trismegistus) (count @sefkhet-abwy))
@@ -46,22 +48,21 @@
             min-num (apply min @hermes-trismegistus)
             diff (- max-num min-num)
             score (- 100 diff)]
-           (paint score)))
+           (iris score)))
 
 
 (defn manifestation [req]
       (acknowledge-guest (who-goes-there? req))
       {:status 200
-       :headers {"Content-Type" "text/html"}
-       :body (-> (:params req)
+       :headers {"Content-Type" "application/json"}
+       :body {:number (-> (:params req)
                  (:number)
                  (Integer/parseInt)
                  (min 100)
                  (max 1)
-                 manifest)})
+                 manifest)}})
 
 (defroutes app-routes
-           (GET "/" [] "test!")
            (GET "/manifestation" [] manifestation)
            (route/not-found "Error, page not found!"))
 
@@ -73,6 +74,6 @@
                         (at-at/mk-pool)))
 
       (let [port (Integer/parseInt (or (System/getenv "PORT") "3000"))]
-           (server/run-server (wrap-defaults #'app-routes site-defaults)
+           (server/run-server (-> #'app-routes (wrap-defaults api-defaults) (wrap-json-response) (wrap-cors :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
                               {:port port})
            (println (str "Running webserver at http://127.0.0.1:" port "/"))))

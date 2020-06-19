@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html style="margin: 0;height: 100%;">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mood Ring Ultra</title>
+    <style>
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body style="height:100%;margin: 0;display: flex;justify-content: center;">
+    <div style="display:flex;align-items:center;">
+      <h1
+        id="one-ring-to-rule-them-all-,-one-ring-to-find-them-,-one-ring-to-bring-them-all-and-in-the-darkness-bind-them"
+        style="width:250px;height:250px;border-radius:50%;line-height:250px;text-align:center;background-color:var(--mood, white);animation-name:spin;animation-duration:5000ms;animation-iteration-count:infinite;animation-timing-function:linear;"
+      >
+        Mood Ring Ultra
+      </h1>
+    </div>
+    <script type="module">
+      import init, { get_mood } from "./pkg/wasm.js";
+      async function run() {
+        await init();
+        document
+          .getElementById(
+            "one-ring-to-rule-them-all-,-one-ring-to-find-them-,-one-ring-to-bring-them-all-and-in-the-darkness-bind-them"
+          )
+          .style.setProperty("--mood", await get_mood());
+      }
+      run();
+    </script>
+  </body>
+</html>
